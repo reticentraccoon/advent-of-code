@@ -1,4 +1,4 @@
-package aoc
+package aoc.y2022.day3
 
 import java.io.File
 

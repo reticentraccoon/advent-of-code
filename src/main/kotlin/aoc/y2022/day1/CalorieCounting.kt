@@ -1,4 +1,4 @@
-package aoc
+package aoc.y2022.day1
 
 import java.io.File
 import java.util.PriorityQueue
