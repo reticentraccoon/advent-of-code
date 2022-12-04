@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b2dc5817-03d3-48c0-a545-3b0edb82d624" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/aoc/Day2RockPaperScissors.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/input_day2_rockpaperscissor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/aoc/Day3RucksackReorganization.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/input_day3_rucksackreorganization" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,14 +34,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "project.structure.last.edited": "SDKs",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "reference.projectsettings.compiler.javacompiler"
   }
-}</component>
-  <component name="RunManager" selected="Kotlin.Day2RockPaperScissorsKt">
+}]]></component>
+  <component name="RunManager" selected="Kotlin.Day3RucksackReorganizationKt">
     <configuration name="Day1CalorieCountingKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="aoc.Day1CalorieCountingKt" />
       <module name="AdventOfCode2022" />
@@ -55,8 +60,16 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="Day3RucksackReorganizationKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="aoc.Day3RucksackReorganizationKt" />
+      <module name="AdventOfCode2022" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Kotlin.Day3RucksackReorganizationKt" />
         <item itemvalue="Kotlin.Day2RockPaperScissorsKt" />
         <item itemvalue="Kotlin.Day1CalorieCountingKt" />
       </list>
