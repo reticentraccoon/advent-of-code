@@ -1,144 +1,82 @@
 package aoc.y2022.day8
 
+import core.Coordinates
+import core.Direction
+import core.MatrixViewGenerators
 import java.io.File
 import kotlin.math.max
 
 fun findVisibleTrees(pathname: String): Int {
-    val stringsFromFile = File(pathname).readLines()
-    val numericMatrix = stringsFromFile.map {
-        it.toCharArray().map { c -> c.toString().toInt() }.toIntArray()
-    }.toTypedArray()
-    val numRows = numericMatrix.size
-    val numCols = numericMatrix[0].size
-
-    val maxMatrixMap =
-        Cardinals.values().associateWith { Array(numericMatrix.size) { Array(numericMatrix[0].size) { 0 } } }
-
-    for (i in 0 until numRows) {
-        var maxForIteration = -1
-        for (j in 0 until numCols) {
-            maxMatrixMap[Cardinals.LEFT]!![i][j] = maxForIteration
-            if (numericMatrix[i][j] > maxForIteration) {
-                maxForIteration = numericMatrix[i][j]
-            }
-        }
+    val matrix = File(pathname).readLines().map {
+        it.map { c -> c.digitToInt() }
     }
+    val numRows = matrix.size
+    val numCols = matrix[0].size
 
-    for (i in 0 until numRows) {
-        var maxForIteration = -1
-        for (j in numCols-1 downTo 0) {
-            maxMatrixMap[Cardinals.RIGHT]!![i][j] = maxForIteration
-            if (numericMatrix[i][j] > maxForIteration) {
-                maxForIteration = numericMatrix[i][j]
-            }
-        }
-    }
-
-    for (i in 0 until numCols) {
-        var maxForIteration = -1
-        for (j in 0 until numRows) {
-            maxMatrixMap[Cardinals.TOP]!![j][i] = maxForIteration
-            if (numericMatrix[j][i] > maxForIteration) {
-                maxForIteration = numericMatrix[j][i]
-            }
-        }
-    }
-
-    for (i in 0 until numCols) {
-        var maxForIteration = -1
-        for (j in numRows-1 downTo 0) {
-            maxMatrixMap[Cardinals.BOTTOM]!![j][i] = maxForIteration
-            if (numericMatrix[j][i] > maxForIteration) {
-                maxForIteration = numericMatrix[j][i]
-            }
-        }
-    }
-
-    var visibleTrees = 0
-    for (i in 0 until numRows) {
-        for (j in 0 until numCols) {
-            cardinals@ for (direction in Cardinals.values()) {
-                if (numericMatrix[i][j] > maxMatrixMap[direction]!![i][j]) {
-                    visibleTrees += 1
-                    break@cardinals
+    val viewMatrices = MatrixViewGenerators.getGenerators(matrix)
+        .associate { generator ->
+            val viewMatrix = Array(matrix.size) { Array(matrix[0].size) { 0 } }
+            generateSequence(generator.startLocation) { it.move(generator.primaryDirection.step) }
+                .takeWhile { it.x in 0 until numRows && it.y in 0 until numCols }
+                .forEach { rowStart ->
+                    generateSequence(rowStart) { it.move(generator.secondaryDirection.step) }
+                        .takeWhile { it.x in 0 until numRows && it.y in 0 until numCols }
+                        .fold(-1) { maxTillNow, height ->
+                            viewMatrix[height.x][height.y] = maxTillNow
+                            max(maxTillNow, matrix[height.x][height.y])
+                        }
                 }
-            }
-        }
+            generator.view to viewMatrix
     }
 
-    return visibleTrees
+    return matrix.mapIndexed { i, row ->
+        row.mapIndexed { j, height ->
+            viewMatrices.map {
+                height > it.value[i][j]
+            }.reduce { acc, i -> acc || i }.let { if (it) 1 else 0 }
+        }
+    }.sumOf { it.sum() }
 }
 
 fun findMaxScenicScore(pathname: String): Int {
-    val stringsFromFile = File(pathname).readLines()
-    val numericMatrix = stringsFromFile.map {
-        it.toCharArray().map { c -> c.toString().toInt() }.toIntArray()
-    }.toTypedArray()
-    val numRows = numericMatrix.size
-    val numCols = numericMatrix[0].size
+    val matrix = File(pathname).readLines().map {
+        it.map { c -> c.digitToInt() }
+    }
+    val numRows = matrix.size
+    val numCols = matrix[0].size
 
-    var maxScenicDistance = 0
-    for (i in 0 until numRows) {
-        for (j in 0 until numCols) {
-            var topIterator = i - 1
-            var topDistance = 0
-            top@ while (topIterator >= 0) {
-                if (topIterator == 0 || numericMatrix[topIterator][j] >= numericMatrix[i][j]) {
-                    topDistance = i - topIterator
-                    break@top
-                }
-                topIterator -= 1
-            }
-
-            var bottomIterator = i + 1
-            var bottomDistance = 0
-            bottom@ while (bottomIterator < numRows) {
-                if (bottomIterator == numRows - 1 || numericMatrix[bottomIterator][j] >= numericMatrix[i][j]) {
-                    bottomDistance = bottomIterator - i
-                    break@bottom
-                }
-                bottomIterator += 1
-            }
-
-            var leftIterator = j - 1
-            var leftDistance = 0
-            left@ while (leftIterator >= 0) {
-                if (leftIterator == 0 || numericMatrix[i][leftIterator] >= numericMatrix[i][j]) {
-                    leftDistance = j - leftIterator
-                    break@left
-                }
-                leftIterator -= 1
-            }
-
-            var rightIterator = j + 1
-            var rightDistance = 0
-            right@ while (rightIterator < numCols) {
-                if (rightIterator == numRows - 1 || numericMatrix[i][rightIterator] >= numericMatrix[i][j]) {
-                    rightDistance = rightIterator - j
-                    break@right
-                }
-                rightIterator += 1
-            }
-
-            val scenicNumber = topDistance * rightDistance * bottomDistance * leftDistance
-            maxScenicDistance = max(maxScenicDistance, scenicNumber)
+    val scenicScores = matrix.mapIndexed { i, row ->
+        row.mapIndexed { j, height ->
+            Direction.CARDINALS.map { direction ->
+                val currentTree = Coordinates(i, j)
+                generateSequence(currentTree) { it.move(direction.step) }
+                    .drop(1)
+                    .takeWhile {
+                        (it.x in 0 until numRows && it.y in 0 until numCols)
+                                && matrix[it.x][it.y] < height
+                    }
+                    .lastOrNull()
+                    ?.let {
+                        getScenicDistance(it, currentTree, direction.step, numRows, numCols)
+                    } ?: getScenicDistance(currentTree, currentTree, direction.step, numRows, numCols)
+            }.reduce { acc, i -> acc * i }
         }
     }
-    return maxScenicDistance
+
+    return scenicScores.maxOf { it.max() }
 }
 
-enum class Cardinals {
-    TOP,
-    RIGHT,
-    BOTTOM,
-    LEFT
-}
-
-private fun printMatrix(matrix: Array<Array<Int>>) {
-    for (i in 0 until matrix.size) {
-        for (j in 0 until matrix[0].size) {
-            print(matrix[i][j])
-        }
-        println()
+private fun getScenicDistance(
+    lastTreeInRange: Coordinates,
+    startingElement: Coordinates,
+    moveStep: Coordinates,
+    numRows: Int,
+    numCols: Int
+): Int {
+    val nextElementAfterMove = lastTreeInRange.move(moveStep)
+    return if (nextElementAfterMove.x !in 0 until numRows || nextElementAfterMove.y !in 0 until numCols) {
+        lastTreeInRange.manhattanDistance(startingElement)
+    } else {
+        lastTreeInRange.manhattanDistance(startingElement) + 1
     }
 }
